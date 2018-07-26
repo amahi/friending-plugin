@@ -1,0 +1,3 @@
+= Amahi friending plugin
+
+Developed for Amahi 11

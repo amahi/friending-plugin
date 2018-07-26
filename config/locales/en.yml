@@ -1,0 +1,7 @@
+# Localization in English
+
+'en':
+  # put here your string symbols and translations
+  friendings: Friendings
+  requests: Requests
+  friend_users: Friend Users

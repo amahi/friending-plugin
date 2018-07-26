@@ -1,0 +1,6 @@
+# human readable name (no localization supported yet)
+name: Friending
+# class to be mounted
+class: Friendings
+# root url where this plugin will be mounted
+url: /tab/friendings
