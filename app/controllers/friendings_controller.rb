@@ -8,4 +8,8 @@ class FriendingsController < ApplicationController
 	def requests
 		@page_title = t('requests')
 	end
+
+	def delete_user
+		# todo
+	end
 end

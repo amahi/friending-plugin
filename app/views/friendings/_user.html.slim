@@ -14,7 +14,15 @@ div.user[id="whole_user_54hjker"]
           = t('edit_user')
           | &nbsp;
           b = 'user.login'
-          | &mdash;
 
         .settings-actions
-          span Details
+          span.delete
+            = spinner
+            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path('id'),
+                      :remote => true,
+                      :method => :delete,
+                      :id => "delete-user-54hjker",
+                      :data => { :confirm => confirm_user_destroy_message(user.login) },
+                      :class => 'btn-delete remote-btn navbar-right btn btn-sm'
+
+        = render 'share_permissions'

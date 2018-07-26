@@ -1,0 +1,23 @@
+#fu_permissions_table{
+	border: 0px;
+	text-align: center;
+}
+
+.share_access_checkbox{
+	margin-left: 20px;
+}
+
+#fu_permissions_table thead tr:first-child{
+	border-bottom: 1px solid #eae9e9;
+}
+
+#fu_permissions_table td{
+	vertical-align: middle;
+	padding: 8px !important;
+	text-align: center !important;
+}
+
+#fu_permissions_table .spinner{
+	position: absolute;
+	margin-top: -10px;
+}
