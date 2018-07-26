@@ -1,0 +1,20 @@
+- user = User.all.first
+
+div.user[id="whole_user_54hjker"]
+  table.settings.stretchtoggle
+    tr.hover-style
+      td.settings-col1 = 'random@email.com'
+      td.ml-4 style="padding-left: 32px;" = 'username-random'
+      td.settings-col1 = '26 July, 2019'
+
+  div.settings-stretcher[id="about_user_54hjker" style="display:none;"]
+    div.user-manage.collapsed-div-style
+      fieldset
+        legend
+          = t('edit_user')
+          | &nbsp;
+          b = 'user.login'
+          | &mdash;
+
+        .settings-actions
+          span Details

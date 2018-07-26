@@ -5,3 +5,9 @@
   friendings: Friendings
   requests: Requests
   friend_users: Friend Users
+  no_friend_users: No Friend Users Added
+  add_new_friend_user: Add new Friend User
+  create_a_new_friend_user: Create new Friend User
+  email: Email
+  username: UserName
+  created_at: Created At
