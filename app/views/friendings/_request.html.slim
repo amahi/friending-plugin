@@ -1,0 +1,15 @@
+- request = nil
+
+div.user[id="whole_request_54hjker"]
+  table.settings.stretchtoggle
+    tr
+      td.settings-col1 = 'random@email.com'
+      td.ml-4 style="padding-left: 32px;" = '27th July, 2019 12 am'
+      td.ml-4 style="padding-left: 32px;" = 'Accepted'
+      td.settings-col1
+        = form_tag "/frnd/54hjker",\
+          :class => 'form-inline',\
+          :remote => true,\
+          :id => 'request_54hjker_trigger' do |f|
+            = submit_tag t('delete'), :class => 'btnn btn-create btn btn-info btn-sm left-margin-10'
+            = spinner
