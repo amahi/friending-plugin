@@ -1,6 +1,6 @@
 - @user = User.new
 
-= form_for @user, :url => "/frnd/new/",
+= form_for @user, :url => friendings_engine.create_friend_request_path,
     :remote => true, \
     :html => { \
       :data => { \
