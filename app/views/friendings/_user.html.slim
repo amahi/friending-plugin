@@ -1,19 +1,20 @@
-- user = User.all.first
+- user = friend_user["amahi_user"]
 
-div.user[id="whole_user_54hjker"]
+div.user[id="whole_user_#{user["id"]}"]
   table.settings.stretchtoggle
     tr.hover-style
-      td.settings-col1 = 'random@email.com'
-      td.ml-4 style="padding-left: 32px;" = 'username-random'
-      td.settings-col1 = '26 July, 2019'
+      td.settings-col1 = user["email"]
+      td.ml-4 style="padding-left: 32px;" = "username-random"
+      td.settings-col1 
+        = DateTime.parse(user["created_at"]).strftime('%a, %d %b %Y %H:%M:%S')
 
-  div.settings-stretcher[id="about_user_54hjker" style="display:none;"]
+  div.settings-stretcher[id="about_user_#{user["id"]}" style="display:none;"]
     div.user-manage.collapsed-div-style
       fieldset
         legend
-          = t('edit_user')
+          = t('edit_user')+" "
           | &nbsp;
-          b = 'user.login'
+          b = "username-random"
 
         .settings-actions
           span.delete
@@ -21,8 +22,8 @@ div.user[id="whole_user_54hjker"]
             = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path('id'),
                       :remote => true,
                       :method => :delete,
-                      :id => "delete-user-54hjker",
-                      :data => { :confirm => confirm_user_destroy_message(user.login) },
+                      :id => "delete-user-#{user["id"]}",
+                      :data => { :confirm => confirm_user_destroy_message("login") },
                       :class => 'btn-delete remote-btn navbar-right btn btn-sm'
 
         = render 'share_permissions'
