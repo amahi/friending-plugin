@@ -34,12 +34,15 @@ class AmahiFriendingApi
 		url = "#{BASE_URL}/request"
 		begin
 			generated_pin = 5.times.map{rand(10)}.join
-			RestClient.post(url, {"email": email, "pin": generated_pin}.to_json, headers={"Api-Key" => APIKEY})
+			response = RestClient.post(url, {"email": email, "pin": generated_pin}.to_json, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			json = JSON.parse(response)
+
 			# TODO: create NAU with provided username
-			return "success"
+
+			return "success", json["message"]
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
-			return "failed"
+			return "failed", err.response
 		end
 	end
 
