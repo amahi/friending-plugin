@@ -1,16 +1,19 @@
 - request = friend_request["amahi_user"]
 
-div.user[id="whole_request_54hjker"]
+div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
   table.settings.stretchtoggle
     tr
       td.settings-col1 = request["email"]
       td.ml-4 style="padding-left: 32px; width: 234px;"
         = DateTime.parse(friend_request["last_requested_at"]).strftime('%a, %d %b %Y %H:%M:%S')
-      td.ml-4 style="padding-left: 32px;" = 'Accepted'
+      td.ml-4 style="padding-left: 32px;" = friend_request["status"]
+      
       td.settings-col1
-        = form_tag "/frnd/54hjker",\
-          :class => 'form-inline',\
-          :remote => true,\
-          :id => 'request_54hjker_trigger' do |f|
-            = submit_tag t('delete'), :class => 'btnn btn-create btn btn-info btn-sm left-margin-10'
+        = form_tag friendings_engine.delete_friend_request_path,\
+          :class => 'request-delete-form form-inline',\
+          :method => 'delete',\
+          :id => "request-delete-form-id-#{friend_request["id"]}",\
+          :remote => true do |f|
+            input.d-none name="id" value="#{friend_request["id"]}"
+            = submit_tag t('delete'), :class => 'delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
             = spinner

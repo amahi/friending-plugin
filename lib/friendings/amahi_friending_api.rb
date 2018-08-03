@@ -47,4 +47,17 @@ class AmahiFriendingApi
 		end
 	end
 
+	def self.delete_friend_request(id)
+		url = "#{BASE_URL}/request/#{id}"
+		begin
+			response = RestClient.delete(url, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			json = JSON.parse(response)
+			return "success", json
+
+		rescue RestClient::ExceptionWithResponse => err
+			json = JSON.parse(err.response)
+			return "failed", json
+		end
+	end
+
 end

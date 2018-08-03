@@ -21,13 +21,25 @@ class FriendingsController < ApplicationController
 
 		status, data = AmahiFriendingApi.post_friend_request(params[:email], params[:username])
 		if status == "success"
-			render :json => data.merge({success: true, message: "Request submitted successfully"})
+			parsed_last_request_time = DateTime.parse(data["last_requested_at"]).strftime('%a, %d %b %Y %H:%M:%S')
+
+			render :json => data.merge({success: true, message: "Request submitted successfully", 
+				parsed_time: parsed_last_request_time})
 		else
 			render :json => data.merge({success: false})
 		end
 	end
 
 	def delete_user
-		# todo
+		#
+	end
+
+	def delete_friend_request
+		status, data = AmahiFriendingApi.delete_friend_request(params[:id])
+		if status == "success"
+			render :json => data.merge({success: true})
+		else
+			render :json => data.merge({success: false})
+		end
 	end
 end
