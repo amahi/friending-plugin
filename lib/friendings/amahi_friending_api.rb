@@ -39,10 +39,11 @@ class AmahiFriendingApi
 
 			# TODO: create NAU with provided username
 
-			return "success", json["message"]
+			return "success", json
+
 		rescue RestClient::ExceptionWithResponse => err
-			err.response
-			return "failed", err.response
+			json = JSON.parse(err.response)
+			return "failed", json
 		end
 	end
 

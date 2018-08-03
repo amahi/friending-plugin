@@ -19,11 +19,11 @@ class FriendingsController < ApplicationController
 			return
 		end
 
-		status, message = AmahiFriendingApi.post_friend_request(params[:email], params[:username])
+		status, data = AmahiFriendingApi.post_friend_request(params[:email], params[:username])
 		if status == "success"
-			render :json => {success: true, message: message}
+			render :json => data.merge({success: true, message: "Request submitted successfully"})
 		else
-			render :json => {success: false, message: message}
+			render :json => data.merge({success: false})
 		end
 	end
 
