@@ -21,3 +21,15 @@
 	position: absolute;
 	margin-top: -10px;
 }
+
+@media (min-width: 768px) and (max-width: 991px) {
+  #custom-width-fr-table{
+	width: 170px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  #custom-width-fr-table{
+	width: 100px !important;
+  }
+}

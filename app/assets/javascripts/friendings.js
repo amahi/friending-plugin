@@ -37,17 +37,7 @@ $(document).on('ajax:success', '#new-user-form', function(event, results) {
             // for adding ajax:success trigger to newly created form
             var last_div = requests_table.lastElementChild;
             $(last_div).on('ajax:success', function(event, results){
-                var spinner = this.querySelector(".spinner");
-                spinner.style.display = "none";
-                if(results["success"]){
-                    var fr_divs = document.getElementsByClassName("friend_request_div");
-                    if(fr_divs.length == 1){
-                        window.location.reload();
-                    }else{
-                        var div = document.getElementById("whole_request_"+results["id"]);
-                        div.parentElement.removeChild(div);
-                    }
-                }
+                deleteRequestAjaxSuccess(this, results);
             });
 
         }else{
@@ -80,7 +70,7 @@ $(document).on('click', '.cancel-link', function(event) {
 
 function getRequestElement(results){
     var node = document.createElement('div');
-    node.innerHTML = "<div class='user friend_request_div' id='whole_request_"+results["id"]+"'> <table class='settings stretchtoggle'> <tbody> <tr> <td class='settings-col1'>"+ results["amahi_user"]["email"] +"</td> <td class='ml-4' style='padding-left: 32px; width: 234px;'>"+ results["parsed_time"] +"</td> <td class='ml-4' style='padding-left: 32px;'>"+ results["status"] +"</td> <td class='settings-col1'> <form class='request-delete-form form-inline' id='request-delete-form-id-"+ results["id"] +"' action='/tab/friendings/frnd/request' accept-charset='UTF-8' data-remote='true' method='post'> <input name='utf8' type='hidden' value='✓'> <input type='hidden' name='_method' value='delete'> <input class='d-none' name='id' value='"+ results["id"] +"'> <input type='submit' name='commit' value='Delete' onclick='deleteRequestBtn(this);' class='delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10' data-disable-with='Delete'> <span class='spinner ' style='display: none'> </span></form></td></tr></tbody></table></div>";
+    node.innerHTML = "<div class='user friend_request_div' id='whole_request_"+results["id"]+"'> <table class='settings stretchtoggle'> <tbody> <tr> <td class='settings-col1'>"+ results["amahi_user"]["email"] +"</td> <td class='ml-4' id='custom-width-fr-table' style='padding-left: 32px; width: 234px;'>"+ results["parsed_time"] +"</td> <td class='ml-4' style='padding-left: 32px;'>"+ results["status"] +"</td> <td class='settings-col1'> <form class='request-delete-form form-inline' id='request-delete-form-id-"+ results["id"] +"' action='/tab/friendings/frnd/request' accept-charset='UTF-8' data-remote='true' method='post'> <input name='utf8' type='hidden' value='✓'> <input type='hidden' name='_method' value='delete'> <input class='d-none' name='id' value='"+ results["id"] +"'> <input type='submit' name='commit' value='Delete' onclick='deleteRequestBtn(this);' class='delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10' data-disable-with='Delete'> <span class='spinner ' style='display: none'> </span></form></td></tr></tbody></table></div>";
     return node;
 }
 
@@ -96,7 +86,11 @@ function deleteRequestBtn(element){
 }
 
 $(".request-delete-form").on('ajax:success', function(event, results){
-    var spinner = this.querySelector(".spinner");
+    deleteRequestAjaxSuccess(this, results);
+});
+
+function deleteRequestAjaxSuccess(element, results){
+    var spinner = element.querySelector(".spinner");
     spinner.style.display = "none";
     if(results["success"]){
         var fr_divs = document.getElementsByClassName("friend_request_div");
@@ -107,5 +101,4 @@ $(".request-delete-form").on('ajax:success', function(event, results){
             div.parentElement.removeChild(div);
         }
     }
-});
-
+}
