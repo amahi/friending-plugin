@@ -11,6 +11,24 @@ class AmahiFriendingApi
 		begin
 			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
 			json = JSON.parse(response)
+
+			remote_users = User.where.not({remote_user:nil})
+			mapping = {}
+			remote_users.each do |user|
+				mapping[user.remote_user] = user.login
+			end
+
+			json.each do |user|
+				email = user["amahi_user"]["email"]
+				if mapping[email].blank?
+					# create NAU using generated username (fix this)
+					generated_username = email[0..email.index("@")-1]
+					user["amahi_user"]["username"] = generated_username + "5234"
+				else
+					user["amahi_user"]["username"] = mapping[email]
+				end
+			end
+
 			return "success", json
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
