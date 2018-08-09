@@ -35,7 +35,7 @@ class FriendingsController < ApplicationController
 	end
 
 	def delete_friend_request
-		status, data = AmahiFriendingApi.delete_friend_request(params[:id])
+		status, data = AmahiFriendingApi.delete_friend_request(params[:id], params[:email])
 		render :json => data.merge({success: status == "success", id: params[:id]})
 	end
 end

@@ -72,11 +72,17 @@ class AmahiFriendingApi
 		end
 	end
 
-	def self.delete_friend_request(id)
+	def self.delete_friend_request(id, email = nil)
 		url = "#{BASE_URL}/request/#{id}"
 		begin
 			response = RestClient.delete(url, headers={"Api-Key" => APIKEY, "content-type" => :json})
 			json = JSON.parse(response)
+
+			unless email.blank?
+				user = User.where({remote_user: email}).first
+				user.delete unless user.blank?
+			end
+
 			return "success", json
 
 		rescue RestClient::ExceptionWithResponse => err
@@ -86,7 +92,8 @@ class AmahiFriendingApi
 	end
 
 	def self.create_friend_user(email, username, pin)
-		user = User.new({login: username, pin: pin, name: username, password: '12345678', password_confirmation: '12345678', remote_user: email})
+		generated_password = rand(36**8).to_s(36)
+		user = User.new({login: username, pin: pin, name: username, password: generated_password, password_confirmation: generated_password, remote_user: email})
 		user.save
 	end
 

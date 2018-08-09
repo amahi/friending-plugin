@@ -15,5 +15,6 @@ div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
           :id => "request-delete-form-id-#{friend_request["id"]}",\
           :remote => true do |f|
             input.d-none name="id" value="#{friend_request["id"]}"
+            input.d-none name="email" value="#{request["email"]}"
             = submit_tag t('delete'), :class => 'delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
             = spinner
