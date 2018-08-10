@@ -21,7 +21,7 @@ div.friend_user_div.user[id="whole_user_#{user["id"]}"]
         .settings-actions
           span.delete
             = spinner
-            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path(:id => user["id"], :email => user["email"]),
+            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path(:id => user["id"], :email => user["email"], :type => user["type"]),
                       :remote => true,
                       :method => :delete,
                       :id => "delete-user-#{user["id"]}",
