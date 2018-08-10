@@ -106,4 +106,23 @@ class AmahiFriendingApi
 		!(username.blank? or (username.length < 3 or username.length > 32) or !(username =~ /\A[A-Za-z][A-Za-z0-9]+\z/))
 	end
 
+	def self.delete_user(user_id, email)
+		url = "#{BASE_URL}/user/#{user_id}"
+		begin
+			response = RestClient.delete(url, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			json = JSON.parse(response)
+
+			unless email.blank?
+				user = User.where({remote_user: email}).first
+				user.delete unless user.blank?
+			end
+
+			return "success", json
+
+		rescue RestClient::ExceptionWithResponse => err
+			json = JSON.parse(err.response)
+			return "failed", json
+		end
+	end
+
 end

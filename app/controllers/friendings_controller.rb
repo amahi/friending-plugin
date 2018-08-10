@@ -30,12 +30,26 @@ class FriendingsController < ApplicationController
 		end
 	end
 
-	def delete_user
-		#
-	end
-
 	def delete_friend_request
 		status, data = AmahiFriendingApi.delete_friend_request(params[:id], params[:email])
 		render :json => data.merge({success: status == "success", id: params[:id]})
+	end
+
+	def delete_user
+		status, data = AmahiFriendingApi.delete_user(params[:id], params[:email])
+		render :json => data.merge({success: status == "success", id: params[:id], email: params[:email]})
+	end
+
+	def toggle_share_access
+		# params[:share_id], params[:access] or params[:writable] = true or false
+
+		# Share.first.toggle_access!(17)
+		# Share.first.toggle_write!(17)
+		# Share.first.users_with_write_access.as_json
+		# Share.first.users_with_share_access.as_json
+	end
+
+	def resend_friend_request
+		#
 	end
 end

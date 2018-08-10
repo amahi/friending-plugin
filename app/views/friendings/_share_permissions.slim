@@ -8,52 +8,18 @@
         th scope="col" Access
         th scope="col" Writable
     tbody
-      tr
-        td.border-0 Photos
-        td.align-middle
-          = simple_remote_checkbox :id => "share_access_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-        td.align-middle
-          = simple_remote_checkbox :id => "share_writable_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-      tr
-        td.border-0 Videos
-        td.align-middle
-          = simple_remote_checkbox :id => "share_access_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-        td.align-middle
-          = simple_remote_checkbox :id => "share_writable_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-      tr
-        td.border-0 Docs
-        td.align-middle 
-          = simple_remote_checkbox :id => "share_access_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-        td.align-middle
-          = simple_remote_checkbox :id => "share_writable_id1",
-                           :css_class => 'share_access_checkbox',
-                           :url => toggle_readonly_share_path(:id => shares.first.id),
-                           :checked => !shares.first.rdonly,
-                           :no_spinner => true
-          = spinner
-   
+      - shares.each do |share|
+        tr
+          td.border-0 = "#{share['name']}"
+          td.align-middle
+            = simple_remote_checkbox :id => "share_access_id_#{share['id']}",
+                             :css_class => 'share_access_checkbox',
+                             :url => toggle_readonly_share_path(:id => share['id']),
+                             :checked => share.users_with_write_access.include?(friend_user),
+                             :no_spinner => false
+          td.align-middle
+            = simple_remote_checkbox :id => "share_writable_id_#{share['id']}",
+                             :css_class => 'share_access_checkbox',
+                             :url => toggle_readonly_share_path(:id => share['id']),
+                             :checked => share.users_with_share_access.include?(friend_user),
+                             :no_spinner => true

@@ -102,3 +102,16 @@ function deleteRequestAjaxSuccess(element, results){
         }
     }
 }
+
+$(".remote-user-delete").on('ajax:success', function(event, results){
+    if(results["success"]){
+        this.closest(".friend_user_div").remove();
+    }else{
+        this.previousSibling.style.display="none";
+        this.style.display="";
+    }
+});
+
+$(".share_access_checkbox").on('change', function(event){
+    console.log("changed");
+});

@@ -19,11 +19,11 @@ div.friend_user_div.user[id="whole_user_#{user["id"]}"]
         .settings-actions
           span.delete
             = spinner
-            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path('id'),
+            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path(:id => user["id"], :email => user["email"]),
                       :remote => true,
                       :method => :delete,
                       :id => "delete-user-#{user["id"]}",
-                      :data => { :confirm => confirm_user_destroy_message("login") },
-                      :class => 'btn-delete remote-btn navbar-right btn btn-sm'
+                      :data => { :confirm => "Are you sure you want to delete user '"+user["username"]+"' ?\n\nThere is NO UNDO TO THIS DELETION."},
+                      :class => 'remote-user-delete btn-delete remote-btn navbar-right btn btn-sm'
 
-        = render 'share_permissions'
+        = render 'share_permissions', friend_user: user
