@@ -125,4 +125,14 @@ class AmahiFriendingApi
 		end
 	end
 
+	def self.update_share_permission(share_id, user_id, accessable, writable)
+		unless accessable.blank?
+			Share.find(share_id).toggle_access!(user_id)
+		end
+
+		unless writable.blank?
+			Share.find(share_id).toggle_write!(user_id)
+		end
+	end
+
 end
