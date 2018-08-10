@@ -1,4 +1,5 @@
 - shares = Share.all
+- local_user = User.find(friend_user['local_id']) rescue nil
 
 .settings-fields
   table.table.table-borderless#fu_permissions_table
@@ -12,14 +13,29 @@
         tr
           td.border-0 = "#{share['name']}"
           td.align-middle
-            = simple_remote_checkbox :id => "share_access_id_#{share['id']}",
-                             :css_class => 'share_access_checkbox',
+            = form_tag friendings_engine.toggle_share_access_path,\
+              :class => 'toggle-permission-form form-inline',\
+              :method => 'post',\
+              :id => "request-delete-form-id-#{friend_user["id"]}",\
+              :remote => true do |f|
+                input.d-none name="type" value="access"
+                input.d-none name="share_id" value="#{share['id']}"
+                input.d-none name="user_id" value="#{friend_user['local_id']}"
+                = simple_remote_checkbox :id => "share_access_id_#{share['id']}",
+                             :css_class => 'share_checkbox',
                              :url => toggle_readonly_share_path(:id => share['id']),
-                             :checked => share.users_with_write_access.include?(friend_user),
-                             :no_spinner => false
+                             :checked => share.users_with_write_access.include?(local_user)
+
           td.align-middle
-            = simple_remote_checkbox :id => "share_writable_id_#{share['id']}",
-                             :css_class => 'share_access_checkbox',
+            = form_tag friendings_engine.toggle_share_access_path,\
+              :class => 'toggle-permission-form form-inline',\
+              :method => 'post',\
+              :id => "request-delete-form-id-#{friend_user["id"]}",\
+              :remote => true do |f|
+                input.d-none name="type" value="write"
+                input.d-none name="share_id" value="#{share['id']}"
+                input.d-none name="user_id" value="#{friend_user['local_id']}"
+                = simple_remote_checkbox :id => "share_writable_id_#{share['id']}",
+                             :css_class => 'share_checkbox',
                              :url => toggle_readonly_share_path(:id => share['id']),
-                             :checked => share.users_with_share_access.include?(friend_user),
-                             :no_spinner => true
+                             :checked => share.users_with_share_access.include?(local_user)

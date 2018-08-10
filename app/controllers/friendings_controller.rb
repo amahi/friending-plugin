@@ -41,8 +41,8 @@ class FriendingsController < ApplicationController
 	end
 
 	def toggle_share_access
-		AmahiFriendingApi.update_share_permission(params[:share_id], params[:user_id], params[:accessable], params[:writable])
-		render :json => {success: true}
+		AmahiFriendingApi.update_share_permission(params[:share_id], params[:user_id], params[:type])
+		render :json => {success: true, share_id: params[:share_id], type: params[:type], user_id: params[:user_id]}
 	end
 
 	def resend_friend_request

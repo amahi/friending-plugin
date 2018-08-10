@@ -10,26 +10,58 @@ class AmahiFriendingApi
 		url = "#{BASE_URL}/users"
 		begin
 			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
-			json = JSON.parse(response)
+			fetched_users = JSON.parse(response)
 
-			remote_users = User.where.not({remote_user:nil})
-			mapping = {}
-			remote_users.each do |user|
-				mapping[user.remote_user] = user.login
+			local_users = User.where.not({remote_user:nil})
+
+			data = []
+			mapping = {}  # email -> NAU
+
+			local_users.each do |user|
+				mapping[user.remote_user] = user
 			end
 
-			json.each do |user|
+			fetched_users.each do |user|
 				email = user["amahi_user"]["email"]
+
 				if mapping[email].blank?
-					# create NAU using generated username (fix this)
-					generated_username = email[0..email.index("@")-1]
-					user["amahi_user"]["username"] = generated_username + "5234"
+					# case when NAU is deleted by admin and so probably admin do not want this
+					# NAU as friend user and thus this user needs to be deleted from amahi.org
+
+					self.delete_user(user["amahi_user"]["id"], nil)
+
 				else
-					user["amahi_user"]["username"] = mapping[email]
+					# case when remote user is present as NAU on platform
+					user["amahi_user"]["username"] = mapping[email].login
+					user["amahi_user"]["local_id"] = mapping[email].id
+					user["amahi_user"]["type"] = "accepted"
+
+					mapping.delete(email)
+
+					data << user
 				end
 			end
 
-			return "success", json
+			# case when NAU is present but that user is not present on amahi.org, this is possible
+			# when friend request is currently active and waiting for acceptance or it gets expired
+			mapping.each do |mapped_user|
+				user = mapped_user[1]
+				obj = {}
+				obj["id"] = user.id
+				obj["created_at"] = user.created_at.to_s
+				obj["amahi_user"] = {}
+				obj["amahi_user"]["id"] = user.id
+				obj["amahi_user"]["created_at"] = user.created_at.to_s
+				obj["amahi_user"]["email"] = user.remote_user
+				obj["amahi_user"]["username"] = user.login
+				obj["amahi_user"]["local_id"] = user.id
+				obj["amahi_user"]["type"] = "stale"
+
+				data << obj
+			end
+
+			return "success", data
+
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
 			return "failed", []
@@ -125,12 +157,10 @@ class AmahiFriendingApi
 		end
 	end
 
-	def self.update_share_permission(share_id, user_id, accessable, writable)
-		unless accessable.blank?
+	def self.update_share_permission(share_id, user_id, type) #user_id is wrong, create user if local user not exist
+		if type == "access"
 			Share.find(share_id).toggle_access!(user_id)
-		end
-
-		unless writable.blank?
+		else
 			Share.find(share_id).toggle_write!(user_id)
 		end
 	end

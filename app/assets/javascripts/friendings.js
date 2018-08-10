@@ -112,6 +112,20 @@ $(".remote-user-delete").on('ajax:success', function(event, results){
     }
 });
 
-$(".share_access_checkbox").on('change', function(event){
-    console.log("changed");
+$(".share_checkbox").on('change', function(event){
+    var element = event.target;
+    var spinner = this.nextSibling.nextSibling;
+    spinner.style.display = "";
+    element.disabled = true;
+
+    var form = this.closest(".toggle-permission-form");
+    $(form).trigger('submit.rails');
 });
+
+$(".toggle-permission-form").on('ajax:success', function(event, results){
+    var spinner = this.querySelector(".spinner");
+    spinner.style.display = "none";
+    this.querySelector(".share_checkbox").disabled = false;
+});
+
+$('.stale_user_icon').popover();
