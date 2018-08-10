@@ -70,7 +70,9 @@ $(document).on('click', '.cancel-link', function(event) {
 
 function getRequestElement(results){
     var node = document.createElement('div');
-    node.innerHTML = "<div class='user friend_request_div' id='whole_request_"+results["id"]+"'> <table class='settings stretchtoggle'> <tbody> <tr> <td class='settings-col1'>"+ results["amahi_user"]["email"] +"</td> <td class='ml-4' id='custom-width-fr-table' style='padding-left: 32px; width: 234px;'>"+ results["parsed_time"] +"</td> <td class='ml-4' style='padding-left: 32px;'>"+ results["status"] +"</td> <td class='settings-col1'> <form class='request-delete-form form-inline' id='request-delete-form-id-"+ results["id"] +"' action='/tab/friendings/frnd/request' accept-charset='UTF-8' data-remote='true' method='post'> <input name='utf8' type='hidden' value='✓'> <input type='hidden' name='_method' value='delete'> <input class='d-none' name='id' value='"+ results["id"] +"'> <input class='d-none' name='email' value='"+results["amahi_user"]["email"]+"'> <input type='submit' name='commit' value='Delete' onclick='deleteRequestBtn(this);' class='delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10' data-disable-with='Delete'> <span class='spinner ' style='display: none'> </span></form></td></tr></tbody></table></div>";
+
+    node.innerHTML = "<div class='user friend_request_div' id='whole_request_"+results["id"]+"'> <table class='settings stretchtoggle'> <tbody> <tr> <td class='settings-col1'>"+ results["amahi_user"]["email"] +"</td> <td class='ml-4 last_requested_at_container' id='custom-width-fr-table' style='padding-left: 32px; width: 234px;'>"+ results["parsed_time"] +"</td> <td class='ml-4' style='padding-left: 32px;'>"+ results["status"] +"</td> <td class='settings-col1'> <form class='request-delete-form form-inline' id='request-delete-form-id-"+ results["id"] +"' action='/tab/friendings/frnd/request' accept-charset='UTF-8' data-remote='true' method='post'> <input name='utf8' type='hidden' value='✓'> <input type='hidden' name='_method' value='delete'> <input class='d-none' name='id' value='"+ results["id"] +"'> <input class='d-none' name='email' value='"+results["amahi_user"]["email"]+"'> <input type='submit' name='commit' value='Delete' onclick='deleteRequestBtn(this);' class='mr-2 mt-1 mb-1 delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10' data-disable-with='Delete'> <input type='submit' name='commit' value='Resend' onclick='resendRequestBtn(this);' class='mt-1 mb-1 resend-request-btn btnn btn-create btn btn-info btn-sm left-margin-10' data-disable-with='Resend'> <span class='spinner ' style='display: none'> </span></form></td></tr></tbody></table></div>";
+
     return node;
 }
 
@@ -78,11 +80,30 @@ $(".delete-request-btn").on('click', function(event){
     deleteRequestBtn(event.target);
 });
 
+$(".resend-request-btn").on('click', function(event){
+    resendRequestBtn(event.target);
+});
+
 function deleteRequestBtn(element){
-    var btn = element;
-    var form = element.parentElement;
-    form.querySelector(".spinner").style.display = "";
-    $(form).trigger('submit.rails');
+    if(confirm('Are you sure you want to delete this friend request ?')){
+        var btn = element;
+        var form = element.parentElement;
+        form.querySelector(".spinner").style.display = "";
+        $(form).trigger('submit.rails');
+    }
+}
+
+function resendRequestBtn(element){
+    if(confirm('Are you sure you want to resend this friend request ?')){
+        var btn = element;
+        var form = element.parentElement;
+        form.querySelector(".spinner").style.display = "";
+
+        var method_element = form.querySelector("input[name='_method']");
+        method_element.value = "put";
+        $(form).trigger('submit.rails');
+        method_element.value = "delete";
+    }
 }
 
 $(".request-delete-form").on('ajax:success', function(event, results){
@@ -92,13 +113,22 @@ $(".request-delete-form").on('ajax:success', function(event, results){
 function deleteRequestAjaxSuccess(element, results){
     var spinner = element.querySelector(".spinner");
     spinner.style.display = "none";
+
     if(results["success"]){
-        var fr_divs = document.getElementsByClassName("friend_request_div");
-        if(fr_divs.length == 1){
-            window.location.reload();
-        }else{
+        if(results["last_request_at"]){
+            // resent request
             var div = document.getElementById("whole_request_"+results["id"]);
-            div.parentElement.removeChild(div);
+            div.querySelector(".last_requested_at_container").innerHTML = results["last_request_at"];
+
+        }else{
+            // deletion request
+            var fr_divs = document.getElementsByClassName("friend_request_div");
+            if(fr_divs.length == 1){
+                window.location.reload();
+            }else{
+                var div = document.getElementById("whole_request_"+results["id"]);
+                div.parentElement.removeChild(div);
+            }
         }
     }
 }

@@ -6,4 +6,5 @@ Friendings::Engine.routes.draw do
 	delete '/frnd' => 'friendings#delete_user', :as => 'delete_friend_user'
 	delete '/frnd/request' => 'friendings#delete_friend_request', :as => 'delete_friend_request'
 	post '/frnd/share' => 'friendings#toggle_share_access', :as => 'toggle_share_access'
+	put '/frnd/request' => 'friendings#resend_friend_request', :as => 'resend_friend_request'
 end

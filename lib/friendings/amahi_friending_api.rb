@@ -165,4 +165,18 @@ class AmahiFriendingApi
 		end
 	end
 
+	def self.resend_friend_request(request_id)
+		url = "#{BASE_URL}/request/#{request_id}/resend"
+		begin
+			response = RestClient.put(url, {}, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			json = JSON.parse(response)
+
+			return "success", json
+
+		rescue RestClient::ExceptionWithResponse => err
+			json = JSON.parse(err.response)
+			return "failed", json
+		end
+	end
+
 end

@@ -4,7 +4,7 @@ div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
   table.settings.stretchtoggle
     tr
       td.settings-col1 = request["email"]
-      td#custom-width-fr-table.ml-4 style="padding-left: 32px; width: 234px;"
+      td#custom-width-fr-table.ml-4.last_requested_at_container style="padding-left: 32px; width: 234px;"
         = DateTime.parse(friend_request["last_requested_at"]).strftime('%a, %d %b %Y %H:%M:%S')
       td.ml-4 style="padding-left: 32px;" = friend_request["status"]
       
@@ -16,5 +16,7 @@ div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
           :remote => true do |f|
             input.d-none name="id" value="#{friend_request["id"]}"
             input.d-none name="email" value="#{request["email"]}"
-            = submit_tag t('delete'), :class => 'delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
+            = submit_tag t('delete'), :class => 'mr-2 mt-1 mb-1 delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
+            - unless friend_request["status"] == "Accepted"
+              = submit_tag t('resend'), :class => 'mt-1 mb-1 resend-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
             = spinner

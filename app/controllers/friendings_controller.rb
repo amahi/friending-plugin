@@ -46,6 +46,8 @@ class FriendingsController < ApplicationController
 	end
 
 	def resend_friend_request
-		#
+		status, data = AmahiFriendingApi.resend_friend_request(params[:id])
+		readable_last_request_at = DateTime.parse(Time.now.to_s).strftime('%a, %d %b %Y %H:%M:%S')
+		render :json => data.merge({success: status == "success", id: params[:id], last_request_at: readable_last_request_at})
 	end
 end
