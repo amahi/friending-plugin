@@ -1,3 +1,4 @@
+
 - shares = Share.all
 - local_user = User.find(friend_user['local_id']) rescue nil
 
@@ -18,7 +19,7 @@
               :method => 'post',\
               :id => "request-delete-form-id-#{friend_user["id"]}",\
               :remote => true do |f|
-                input.d-none name="type" value="access"
+                input.d-none name="type" value="write"
                 input.d-none name="share_id" value="#{share['id']}"
                 input.d-none name="user_id" value="#{friend_user['local_id']}"
                 = simple_remote_checkbox :id => "share_access_id_#{share['id']}",
@@ -32,7 +33,7 @@
               :method => 'post',\
               :id => "request-delete-form-id-#{friend_user["id"]}",\
               :remote => true do |f|
-                input.d-none name="type" value="write"
+                input.d-none name="type" value="access"
                 input.d-none name="share_id" value="#{share['id']}"
                 input.d-none name="user_id" value="#{friend_user['local_id']}"
                 = simple_remote_checkbox :id => "share_writable_id_#{share['id']}",

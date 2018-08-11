@@ -167,11 +167,26 @@ class AmahiFriendingApi
 	end
 
 	def self.update_share_permission(share_id, user_id, type) #user_id is wrong, create user if local user not exist
+		user = User.find(user_id)
+		share = Share.find(share_id)
+
 		if type == "access"
-			Share.find(share_id).toggle_access!(user_id)
+			# Share.find(share_id).toggle_access!(user_id)
+			if share.users_with_share_access.include?(user.id)
+				share.users_with_share_access -= [user]
+			else
+				share.users_with_share_access += [user]
+			end
 		else
-			Share.find(share_id).toggle_write!(user_id)
+			# Share.find(share_id).toggle_write!(user_id)
+			if share.users_with_write_access.include?(user.id)
+				share.users_with_write_access -= [user]
+			else
+				share.users_with_write_access += [user]
+			end
 		end
+
+		share.save!
 	end
 
 	def self.resend_friend_request(request_id)
