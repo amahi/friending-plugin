@@ -25,7 +25,7 @@
                 = simple_remote_checkbox :id => "share_access_id_#{share['id']}",
                              :css_class => 'share_checkbox',
                              :url => toggle_readonly_share_path(:id => share['id']),
-                             :checked => share.users_with_share_access.include?(local_user)
+                             :checked => (share.users_with_share_access.include?(local_user) or share.everyone)
 
           td.align-middle
             = form_tag friendings_engine.toggle_share_access_path,\
@@ -39,4 +39,4 @@
                 = simple_remote_checkbox :id => "share_writable_id_#{share['id']}",
                              :css_class => 'share_checkbox',
                              :url => toggle_readonly_share_path(:id => share['id']),
-                             :checked => share.users_with_write_access.include?(local_user)
+                             :checked => (share.users_with_write_access.include?(local_user) or share.everyone)
