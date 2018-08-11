@@ -172,8 +172,10 @@ class AmahiFriendingApi
 
 		if type == "access"
 			share.toggle_access!(user.id)
+			return share.users_with_share_access.include?(user)
 		else
 			share.toggle_write!(user.id)
+			return share.users_with_write_access.include?(user)
 		end
 	end
 

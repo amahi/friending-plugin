@@ -155,7 +155,9 @@ $(".share_checkbox").on('change', function(event){
 $(".toggle-permission-form").on('ajax:success', function(event, results){
     var spinner = this.querySelector(".spinner");
     spinner.style.display = "none";
-    this.querySelector(".share_checkbox").disabled = false;
+    check_box = this.querySelector(".share_checkbox")
+    check_box.disabled = false;
+    check_box.checked = results["updated_value"]
 });
 
 $('.stale_user_icon').popover();
