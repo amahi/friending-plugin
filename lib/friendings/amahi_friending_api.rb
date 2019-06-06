@@ -3,7 +3,7 @@ require 'json'
 require 'rest-client'
 
 class AmahiFriendingApi
-	BASE_URL = "http://66.165.251.200:8877/api/frnd"
+	BASE_URL = "http://66.165.251.203:8877/api/frnd"
 	APIKEY = Setting.where({name: "api-key"}).first.value
 
 	def self.get_friend_users
@@ -28,7 +28,7 @@ class AmahiFriendingApi
 					# case when NAU is deleted by admin and so probably admin do not want this
 					# NAU as friend user and thus this user needs to be deleted from amahi.org
 
-					self.delete_user(user["amahi_user"]["id"], nil)
+					self.delete_user(user["amahi_user"]["id"], nil, "")
 
 				else
 					# case when remote user is present as NAU on platform
@@ -62,6 +62,9 @@ class AmahiFriendingApi
 
 			return "success", data
 
+		rescue Errno::EHOSTUNREACH
+			return "host_unreachable", []
+
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
 			return "failed", []
@@ -74,6 +77,10 @@ class AmahiFriendingApi
 			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
 			json = JSON.parse(response)
 			return "success", json
+
+		rescue Errno::EHOSTUNREACH
+			return "host_unreachable", []
+
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
 			return "failed", []

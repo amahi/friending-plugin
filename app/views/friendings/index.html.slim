@@ -1,17 +1,24 @@
 
 .settings-table#users-table
-  - if @users.any?
-    table.settings
-      thead
-        tr
-          th.settings-col1[scope="col"]= t('email')
-          th[scope="col"]= t('username')
-          th.settings-col1[scope="col"]= t('created_at')
-    - @users.each do |user|
-      = render 'user', friend_user: user
+  - if @status == "success"
+    - if @users.any?
+      table.settings
+        thead
+          tr
+            th.settings-col1[scope="col"]= t('email')
+            th[scope="col"]= t('username')
+            th.settings-col1[scope="col"]= t('created_at')
+      - @users.each do |user|
+        = render 'user', friend_user: user
+    - else
+      .no-users
+        h2= t('no_friend_users')
+  - elsif @status == "host_unreachable"
+    .no-users
+        h2= t('network_problem')
   - else
     .no-users
-      h2= t('no_friend_users')
+        h2= t('some_error_occurred')
 
 = stylesheet_link_tag 'friendings'
 = javascript_include_tag 'friendings'

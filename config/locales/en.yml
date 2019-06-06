@@ -13,3 +13,5 @@
   created_at: Created At
   no_friending_requests: No Friending Requests
   resend: Resend
+  network_problem: Problem in connecting to the server
+  some_error_occurred: Some error occurred
