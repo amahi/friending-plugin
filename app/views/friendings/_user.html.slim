@@ -4,7 +4,7 @@ div.friend_user_div.user[id="whole_user_#{user["id"]}"]
   table.settings.stretchtoggle
     tr.hover-style
       td.settings-col1 = user["email"]
-      td.ml-4 style="padding-left: 32px;" 
+      td.ml-4 style="padding-left: 52px;"
         span class="#{user['type'] == 'stale'? 'stale_user_icon': ''}" data-content="The friend request for this user is either active or expired." rel="popover" data-placement="top" data-trigger="hover"
         span = user["username"]
       td.settings-col1 
