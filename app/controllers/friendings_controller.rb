@@ -15,7 +15,7 @@ class FriendingsController < ApplicationController
 
 	def create_friend_request
 		if params[:email].blank? or params[:username].blank?
-			render :json => {success: false, message: 'Field values are missing'}
+			render :json => {success: false, message: t('missing_field_values')}
 			return
 		end
 
@@ -23,7 +23,7 @@ class FriendingsController < ApplicationController
 		if status == "success"
 			parsed_last_request_time = DateTime.parse(data["last_requested_at"]).strftime('%a, %d %b %Y %H:%M:%S')
 
-			render :json => data.merge({success: true, message: "Request submitted successfully", 
+			render :json => data.merge({success: true, message: t('request_submitted_successfully'),
 				parsed_time: parsed_last_request_time})
 		else
 			render :json => data.merge({success: false})

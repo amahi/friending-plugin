@@ -15,3 +15,5 @@
   resend: Resend
   network_problem: Problem in connecting to the server
   some_error_occurred: Some error occurred
+  missing_field_values: Some field values are missing
+  request_submitted_successfully: Request submitted successfully
