@@ -19,14 +19,12 @@ class FriendingsController < ApplicationController
 			return
 		end
 
-		status, data = AmahiFriendingApi.post_friend_request(params[:email], params[:username])
-		if status == "success"
+		success, response = AmahiFriendingApi.post_friend_request(params[:email], params[:username])
+		if success
 			parsed_last_request_time = DateTime.parse(Time.now.to_s).strftime('%a, %d %b %Y %H:%M:%S')
-
-			render :json => data.merge({success: true, message: t('request_submitted_successfully'),
-				parsed_time: parsed_last_request_time})
+			render :json => response.merge({parsed_time: parsed_last_request_time})
 		else
-			render :json => data.merge({success: false})
+			render :json => response
 		end
 	end
 

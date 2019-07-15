@@ -1,3 +1,3 @@
 = Amahi friending plugin
 
-Amahi friending plugin is developed for Amahi 12. This repository contains platform side implementation of the plugin. For backend implementation, refer amahi-friending-server[https://github.com/csoni111/amahi-friending-server] repo. The ultimate aim of this plugin is to give Amahi users sharing functionalities for their files. With the help of this plugin, an user can give view and access permissions to his friend for a particular share. 
+Amahi friending plugin is developed for Amahi 12. This repository contains platform side implementation of the plugin. For backend implementation, refer (amahi-friending-backend)[https://github.com/sukhbir-singh/amahi-friending-backend] repo. The ultimate aim of this plugin is to give Amahi users sharing functionalities for their files. With the help of this plugin, an user can give view and access permissions to his friend for a particular share.

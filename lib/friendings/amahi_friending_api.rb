@@ -9,10 +9,10 @@ class AmahiFriendingApi
 	def self.get_friend_users
 		url = "#{BASE_URL}/users"
 		begin
-			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
-			fetched_users = JSON.parse(response)
+			response = RestClient.get(url, headers={"api-key" => APIKEY})
+			json = JSON.parse(response)
 
-			return fetched_users["message"], [] unless fetched_users["success"]
+			return json["message"], [] unless json["success"]
 
 			local_users = User.where.not({remote_user:nil})
 
@@ -23,6 +23,7 @@ class AmahiFriendingApi
 				mapping[user.remote_user] = user
 			end
 
+			fetched_users = json["data"]
 			fetched_users.each do |user|
 				email = user["amahi_user"]["email"]
 
@@ -76,11 +77,11 @@ class AmahiFriendingApi
 	def self.get_friend_requests
 		url = "#{BASE_URL}/requests"
 		begin
-			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
+			response = RestClient.get(url, headers={"api-key" => APIKEY})
 			json = JSON.parse(response)
 
 			return json["message"], [] unless json["success"]
-			return "success", json
+			return "success", json["data"]
 
 		rescue Errno::EHOSTUNREACH
 			return "host_unreachable", []
@@ -103,22 +104,22 @@ class AmahiFriendingApi
 		url = "#{BASE_URL}/request"
 		begin
 			generated_pin = 5.times.map{rand(10)}.join
-			response = RestClient.post(url, {"email": email, "pin": generated_pin}.to_json, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			response = RestClient.post(url, {"email": email, "pin": generated_pin}.to_json, headers={"api-key" => APIKEY, "content-type" => :json})
 
 			json = JSON.parse(response)
-			create_friend_user(email, username, generated_pin)
-			return "success", json
+			create_friend_user(email, username, generated_pin) if json["success"]
+			return json["success"], json
 
 		rescue RestClient::ExceptionWithResponse => err
 			json = JSON.parse(err.response)
-			return "failed", json
+			return false, json
 		end
 	end
 
 	def self.delete_friend_request(id, email = nil)
 		url = "#{BASE_URL}/request/#{id}"
 		begin
-			response = RestClient.delete(url, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			response = RestClient.delete(url, headers={"api-key" => APIKEY, "content-type" => :json})
 			json = JSON.parse(response)
 
 			unless email.blank?
@@ -161,7 +162,7 @@ class AmahiFriendingApi
 		end
 
 		begin
-			response = RestClient.delete(url, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			response = RestClient.delete(url, headers={"api-key" => APIKEY, "content-type" => :json})
 			json = JSON.parse(response)
 
 			unless email.blank?
@@ -193,7 +194,7 @@ class AmahiFriendingApi
 	def self.resend_friend_request(request_id)
 		url = "#{BASE_URL}/request/#{request_id}/resend"
 		begin
-			response = RestClient.put(url, {}, headers={"Api-Key" => APIKEY, "content-type" => :json})
+			response = RestClient.put(url, {}, headers={"api-key" => APIKEY, "content-type" => :json})
 			json = JSON.parse(response)
 
 			return "success", json
