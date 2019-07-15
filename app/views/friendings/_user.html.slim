@@ -1,31 +1,30 @@
-- user = friend_user["amahi_user"]
 
-div.friend_user_div.user[id="whole_user_#{user["id"]}"]
+div.friend_user_div.user[id="whole_user_#{friend_user["id"]}"]
   table.settings.stretchtoggle
     tr.hover-style
-      td.settings-col1 = user["email"]
+      td.settings-col1 = friend_user["email"]
       td.ml-4 style="padding-left: 32px;"
-        span class="float-left" = user["username"]
-        span class="#{user['type'] == 'stale'? 'stale_user_icon': ''}" data-content="The friend request for this user is either active or expired." rel="popover" data-placement="top" data-trigger="hover"
+        span class="float-left" = friend_user["username"]
+        span class="#{friend_user['type'] == 'stale'? 'stale_user_icon': ''}" data-content="The friend request for this user is either active or expired." rel="popover" data-placement="top" data-trigger="hover"
       td.settings-col1 
-        = DateTime.parse(user["created_at"]).strftime('%a, %d %b %Y %H:%M:%S')
+        = DateTime.parse(friend_user["created_at"]).strftime('%a, %d %b %Y %H:%M:%S')
 
-  div.settings-stretcher[id="about_user_#{user["id"]}" style="display:none;"]
+  div.settings-stretcher[id="about_user_#{friend_user["id"]}" style="display:none;"]
     div.user-manage.collapsed-div-style
       fieldset
         legend
           = t('edit_user')+" "
           | &nbsp;
-          b = user["username"]
+          b = friend_user["username"]
 
         .settings-actions
           span.delete
             = spinner
-            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path(:id => user["id"], :email => user["email"], :type => user["type"]),
+            = link_to (t('delete') + ' User'), friendings_engine.delete_friend_user_path(:id => friend_user["id"], :email => friend_user["email"], :type => friend_user["type"]),
                       :remote => true,
                       :method => :delete,
-                      :id => "delete-user-#{user["id"]}",
-                      :data => { :confirm => "Are you sure you want to delete user '"+user["username"]+"' ?\n\nThere is NO UNDO TO THIS DELETION."},
+                      :id => "delete-user-#{friend_user["id"]}",
+                      :data => { :confirm => "Are you sure you want to delete user '"+friend_user["username"]+"' ?\n\nThere is NO UNDO TO THIS DELETION."},
                       :class => 'remote-user-delete btn-delete remote-btn navbar-right btn btn-sm'
 
-        = render 'share_permissions', friend_user: user
+        = render 'share_permissions', friend_user: friend_user

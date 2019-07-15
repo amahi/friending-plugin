@@ -25,19 +25,19 @@ class AmahiFriendingApi
 
 			fetched_users = json["data"]
 			fetched_users.each do |user|
-				email = user["amahi_user"]["email"]
+				email = user["email"]
 
 				if mapping[email].blank?
 					# case when NAU is deleted by admin and so probably admin do not want this
 					# NAU as friend user and thus this user needs to be deleted from amahi.org
 
-					self.delete_user(user["amahi_user"]["id"], nil, "")
+					# self.delete_user(user["id"], nil, "")
 
 				else
 					# case when remote user is present as NAU on platform
-					user["amahi_user"]["username"] = mapping[email].login
-					user["amahi_user"]["local_id"] = mapping[email].id
-					user["amahi_user"]["type"] = "accepted"
+					user["username"] = mapping[email].login
+					user["local_id"] = mapping[email].id
+					user["type"] = "accepted"
 
 					mapping.delete(email)
 
