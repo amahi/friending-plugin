@@ -3,7 +3,7 @@ require 'json'
 require 'rest-client'
 
 class AmahiFriendingApi
-	BASE_URL = "http://66.165.251.203:8877/api/frnd"
+	BASE_URL = "http://127.0.0.1:5000/frnd"
 	APIKEY = Setting.where({name: "api-key"}).first.value
 
 	def self.get_friend_users
@@ -11,6 +11,8 @@ class AmahiFriendingApi
 		begin
 			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
 			fetched_users = JSON.parse(response)
+
+			return fetched_users["message"], [] unless fetched_users["success"]
 
 			local_users = User.where.not({remote_user:nil})
 
@@ -76,6 +78,8 @@ class AmahiFriendingApi
 		begin
 			response = RestClient.get(url, headers={"Api-Key" => APIKEY})
 			json = JSON.parse(response)
+
+			return json["message"], [] unless json["success"]
 			return "success", json
 
 		rescue Errno::EHOSTUNREACH

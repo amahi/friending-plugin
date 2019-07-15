@@ -17,6 +17,9 @@
   - elsif @status == "host_unreachable"
       .no-requests
         h2= t('network_problem')
+  - elsif @status == "authetication failed"
+    .no-users
+        h2= t('authetication_failed')
   - else
       .no-requests
         h2= t('some_error_occurred')
