@@ -99,6 +99,9 @@ function resendRequestBtn(element){
         var form = element.parentElement;
         form.querySelector(".spinner").style.display = "";
 
+        var status_element = form.parentElement.previousSibling;
+        status_element.innerHTML = "Active";
+
         var method_element = form.querySelector("input[name='_method']");
         method_element.value = "put";
         $(form).trigger('submit.rails');

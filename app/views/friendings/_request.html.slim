@@ -16,6 +16,6 @@ div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
             input.d-none name="id" value="#{friend_request["id"]}"
             input.d-none name="email" value="#{friend_request["email"]}"
             = submit_tag t('delete'), :class => 'mr-2 mt-1 mb-1 delete-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
-            - unless friend_request["status"] == "Accepted"
+            - unless friend_request["status_txt"] == "Accepted"
               = submit_tag t('resend'), :class => 'mt-1 mb-1 resend-request-btn btnn btn-create btn btn-info btn-sm left-margin-10'
             = spinner
