@@ -4,7 +4,7 @@ div.user.friend_request_div[id="whole_request_#{friend_request["id"]}"]
     tr
       td.settings-col1 = friend_request["email"]
       td#custom-width-fr-table.ml-4.last_requested_at_container style="padding-left: 32px; width: 234px;"
-        = DateTime.parse(friend_request["last_requested_at"]).strftime('%a, %d %b %Y %H:%M:%S')
+        = DateTime.parse(friend_request["last_requested_at"]).localtime.strftime('%a, %d %b %Y %H:%M:%S')
       td.ml-4 style="padding-left: 32px;" = friend_request["status_txt"]
       
       td.settings-col1

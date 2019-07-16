@@ -68,6 +68,9 @@ class AmahiFriendingApi
 		rescue Errno::EHOSTUNREACH
 			return "host_unreachable", []
 
+		rescue Errno::ECONNREFUSED
+			return "host_unreachable", []
+
 		rescue RestClient::ExceptionWithResponse => err
 			err.response
 			return "failed", []
@@ -84,6 +87,9 @@ class AmahiFriendingApi
 			return "success", json["data"]
 
 		rescue Errno::EHOSTUNREACH
+			return "host_unreachable", []
+
+		rescue Errno::ECONNREFUSED
 			return "host_unreachable", []
 
 		rescue RestClient::ExceptionWithResponse => err

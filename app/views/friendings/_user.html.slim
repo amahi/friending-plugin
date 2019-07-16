@@ -7,7 +7,7 @@ div.friend_user_div.user[id="whole_user_#{friend_user["id"]}"]
         span class="float-left" = friend_user["username"]
         span class="#{friend_user['type'] == 'stale'? 'stale_user_icon': ''}" data-content="The friend request for this user is either active or expired." rel="popover" data-placement="top" data-trigger="hover"
       td.settings-col1 
-        = DateTime.parse(friend_user["created_at"]).strftime('%a, %d %b %Y %H:%M:%S')
+        = DateTime.parse(friend_user["created_at"]).localtime.strftime('%a, %d %b %Y %H:%M:%S')
 
   div.settings-stretcher[id="about_user_#{friend_user["id"]}" style="display:none;"]
     div.user-manage.collapsed-div-style
