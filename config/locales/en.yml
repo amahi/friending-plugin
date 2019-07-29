@@ -3,7 +3,7 @@
 'en':
   # put here your string symbols and translations
   friendings: Friendings
-  requests: Requests
+  requests: Sent Requests
   friend_users: Friend Users
   no_friend_users: No Friend Users Added
   add_new_friend_user: Add new Friend User
