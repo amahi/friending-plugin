@@ -113,13 +113,24 @@ class AmahiFriendingApi
 			response = RestClient.post(url, {"email": email, "pin": generated_pin}.to_json, headers={"api-key" => APIKEY, "content-type" => :json})
 
 			json = JSON.parse(response)
-			create_friend_user(email, username, generated_pin) if json["success"]
+
+			if json["success"]
+			    # create_friend_user(email, username, generated_pin)
+			    save_request_to_hda(json)
+			end
+
 			return json["success"], json
 
 		rescue RestClient::ExceptionWithResponse => err
 			json = JSON.parse(err.response)
 			return false, json
 		end
+	end
+
+	def self.save_request_to_hda(response)
+		friend_request_data = response["request"]
+		hda_friend_request = FriendRequest.new(friend_request_data)
+		hda_friend_request.save
 	end
 
 	def self.delete_friend_request(id, email = nil)
