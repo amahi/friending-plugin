@@ -6,6 +6,10 @@ class AmahiFriendingApi
 	BASE_URL = "http://127.0.0.1:5000/frnd"
 	APIKEY = Setting.where({name: "api-key"}).first.value
 
+	# fetch friend users from Amahi.org friending API
+	# if new users fetched, then create corresponding local HDA users
+	# if user present on HDA but not on fetched users list then delete that user from HDA
+	# also fetch updated users timely by running script which request Amahi.org APIs
 	def self.get_friend_users
 		url = "#{BASE_URL}/users"
 		begin
@@ -14,6 +18,9 @@ class AmahiFriendingApi
 
 			return json["message"], [] unless json["success"]
 
+			# remote_user column in HDA is used for distinguishing friend users from normal HDA users
+			# if remote_user column for a particular user is not nil and contains email address as a
+			# string then it means that this user is a friend user
 			local_users = User.where.not({remote_user:nil})
 
 			data = []
@@ -28,10 +35,10 @@ class AmahiFriendingApi
 				email = user["email"]
 
 				if mapping[email].blank?
-					# case when NAU is deleted by admin and so probably admin do not want this
-					# NAU as friend user and thus this user needs to be deleted from amahi.org
+					# case when new friend request got accepted and so new user needs to be created 
+					# on Amahi.org and so now we need to create new user on HDA
 
-					# self.delete_user(user["id"], nil, "")
+					# byebug
 
 				else
 					# case when remote user is present as NAU on platform
@@ -100,11 +107,11 @@ class AmahiFriendingApi
 
 	def self.post_friend_request(email, username)
 		if self.duplicate_username(username)
-			return "failed", {"message": "Username already exists."}
+			return false, {"message": "Username already exists."}
 		end
 
 		unless self.check_username_format(username)
-			return "failed", {"message": "Invalid username format."}
+			return false, {"message": "Invalid username format."}
 		end
 
 		url = "#{BASE_URL}/request"
@@ -115,7 +122,7 @@ class AmahiFriendingApi
 			json = JSON.parse(response)
 
 			if json["success"]
-			    # create_friend_user(email, username, generated_pin)
+			    # create_friend_user(email, username, generated_pin) - Do not create user directly on HDA
 			    save_request_to_hda(json)
 			end
 
