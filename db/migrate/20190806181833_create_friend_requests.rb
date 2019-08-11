@@ -10,6 +10,7 @@ class CreateFriendRequests < ActiveRecord::Migration[5.2]
       t.datetime :last_requested_at
       t.string :status_txt
       t.string :email
+      t.string :username
 
       t.timestamps
     end

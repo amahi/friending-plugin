@@ -35,40 +35,46 @@ class AmahiFriendingApi
 				email = user["email"]
 
 				if mapping[email].blank?
-					# case when new friend request got accepted and so new user needs to be created 
-					# on Amahi.org and so now we need to create new user on HDA
+					# case when new friend request got accepted and so new user needs to be created on HDA
+					friend_request = FriendRequest.where({email: email}).first
+					next if friend_request.blank?
+					friend_request.status = 2 #accepted
+					friend_request.save
 
-					# byebug
+					username = friend_request.username
+					create_friend_user(email, username, user["pin"])
+
+					user["username"] = username
+					user["local_id"] = user.id
+					user["type"] = "accepted"
+					data << user
 
 				else
 					# case when remote user is present as NAU on platform
 					user["username"] = mapping[email].login
 					user["local_id"] = mapping[email].id
 					user["type"] = "accepted"
-
 					mapping.delete(email)
-
 					data << user
 				end
 			end
 
-			# case when NAU is present but that user is not present on amahi.org, this is possible
-			# when friend request is currently active and waiting for acceptance or it gets expired
-			mapping.each do |mapped_user|
-				user = mapped_user[1]
-				obj = {}
-				obj["id"] = user.id
-				obj["created_at"] = user.created_at.to_s
-				obj["amahi_user"] = {}
-				obj["amahi_user"]["id"] = user.id
-				obj["amahi_user"]["created_at"] = user.created_at.to_s
-				obj["amahi_user"]["email"] = user.remote_user
-				obj["amahi_user"]["username"] = user.login
-				obj["amahi_user"]["local_id"] = user.id
-				obj["amahi_user"]["type"] = "stale"
+			# case when user is locally present but not present on Amahi.org, in this case
+			# local user needs to be deleted from HDA
+			fetched_users_emails = []
+			fetched_users.each { |f_user| fetched_users_emails << f_user["email"] }
 
-				data << obj
-			end
+			local_users_emails = []
+			local_users.each { |l_user| local_users_emails << l_user.remote_user }
+
+			# email ids for which corresponding user needs to be deleted from HDA
+			non_user_email_ids = local_users_emails - fetched_users_emails
+			users_to_be_deleted = User.where({remote_user: non_user_email_ids})
+			users_to_be_deleted.delete
+
+			# Also deleting corresponding friend request from friend_requests table on HDA
+			friend_requests_to_be_deleted = FriendRequest.where({email: non_user_email_ids})
+			friend_requests_to_be_deleted.delete
 
 			return "success", data
 
@@ -123,7 +129,7 @@ class AmahiFriendingApi
 
 			if json["success"]
 			    # create_friend_user(email, username, generated_pin) - Do not create user directly on HDA
-			    save_request_to_hda(json)
+			    save_request_to_hda(json.merge({username: username}))
 			end
 
 			return json["success"], json
