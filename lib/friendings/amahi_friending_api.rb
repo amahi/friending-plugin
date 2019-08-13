@@ -38,16 +38,19 @@ class AmahiFriendingApi
 					# case when new friend request got accepted and so new user needs to be created on HDA
 					friend_request = FriendRequest.where({email: email}).first
 					next if friend_request.blank?
-					friend_request.status = 2 #accepted
+					friend_request.status = 2
+					friend_request.status_txt = "Accepted"
 					friend_request.save
 
 					username = friend_request.username
-					create_friend_user(email, username, user["pin"])
+					status, saved_user_id = create_friend_user(email, username, user["pin"])
 
-					user["username"] = username
-					user["local_id"] = user.id
-					user["type"] = "accepted"
-					data << user
+					if status
+						user["username"] = username
+						user["local_id"] = saved_user_id
+						user["type"] = "accepted"
+						data << user
+					end
 
 				else
 					# case when remote user is present as NAU on platform
@@ -70,11 +73,11 @@ class AmahiFriendingApi
 			# email ids for which corresponding user needs to be deleted from HDA
 			non_user_email_ids = local_users_emails - fetched_users_emails
 			users_to_be_deleted = User.where({remote_user: non_user_email_ids})
-			users_to_be_deleted.delete
+			users_to_be_deleted.delete_all unless users_to_be_deleted.blank?
 
 			# Also deleting corresponding friend request from friend_requests table on HDA
 			friend_requests_to_be_deleted = FriendRequest.where({email: non_user_email_ids})
-			friend_requests_to_be_deleted.delete
+			friend_requests_to_be_deleted.delete_all unless friend_requests_to_be_deleted.blank?
 
 			return "success", data
 
@@ -128,8 +131,7 @@ class AmahiFriendingApi
 			json = JSON.parse(response)
 
 			if json["success"]
-			    # create_friend_user(email, username, generated_pin) - Do not create user directly on HDA
-			    save_request_to_hda(json.merge({username: username}))
+			    save_request_to_hda(json, username)
 			end
 
 			return json["success"], json
@@ -140,9 +142,10 @@ class AmahiFriendingApi
 		end
 	end
 
-	def self.save_request_to_hda(response)
+	def self.save_request_to_hda(response, username)
 		friend_request_data = response["request"]
 		hda_friend_request = FriendRequest.new(friend_request_data)
+		hda_friend_request.username = username
 		hda_friend_request.save
 	end
 
@@ -151,6 +154,9 @@ class AmahiFriendingApi
 		begin
 			response = RestClient.delete(url, headers={"api-key" => APIKEY, "content-type" => :json})
 			json = JSON.parse(response)
+
+			request = FriendRequest.where({email: email}).first
+			request.delete unless request.blank?
 
 			unless email.blank?
 				user = User.where({remote_user: email}).first
@@ -168,7 +174,8 @@ class AmahiFriendingApi
 	def self.create_friend_user(email, username, pin)
 		generated_password = rand(36**8).to_s(36)
 		user = User.new({login: username, pin: pin, name: username, password: generated_password, password_confirmation: generated_password, remote_user: email})
-		user.save
+		status = user.save
+		return status, user.id
 	end
 
 	def self.duplicate_username(username)
