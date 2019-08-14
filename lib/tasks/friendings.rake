@@ -14,9 +14,6 @@ namespace :friendings do
 			output = JSON.parse(response)
 			fetched_friend_users = output["data"]
 
-			puts ">>>>>>>>>>>>> >>>>>>>>>>>>"
-			puts fetched_friend_users.as_json
-
 			# case 1: if friend user present on Amahi.org but not on local HDA
 			# then add this friend user to HDA
 			# case 2: if friend user is not present on Amahi.org but present on
@@ -24,9 +21,6 @@ namespace :friendings do
 
 			sql_query = "SELECT * FROM users where remote_user IS NOT NULL;"
 			local_users = ActiveRecord::Base.connection.execute(sql_query)
-
-			puts ">>>>>>>>>>> >>>>>>>>>"
-			puts local_users.as_json
 
 			mapping = {}
 			local_users.each do |user|
@@ -39,16 +33,27 @@ namespace :friendings do
 
 				if mapping[email].blank?
 					# case when new friend request got accepted and so new user needs to be created on HDA
-					sql_query = "SELECT * FROM friend_requests where remote_user = '#{email}';"
+					sql_query = "SELECT * FROM friend_requests where email='#{email}';"
 					friend_request = ActiveRecord::Base.connection.execute(sql_query)
-					next if friend_request.blank?
-					# friend_request.status = 2 #accepted
-					# username = friend_request.username
-					# create_friend_user(email, username, user["pin"])
+
+					next if friend_request.count == 0
+					update_query = "UPDATE friend_requests SET status=2, status_txt='Accepted' where id=#{friend_request.first[0]};"
+
+					username = friend_request.first[9]
+					generated_password = rand(36**8).to_s(36)
+
+					password_salt = rand(36**20).to_s(36)
+					crypted_password = rand(36**128).to_s(36)
+					persistence_token = rand(36**128).to_s(36)
+
+					current_time = Time.now().strftime('%Y-%m-%d %H:%M:%S')
+
+					# save friend user to HDA database
+					insert_query = "INSERT INTO users(login, pin, name, password_salt, crypted_password, persistence_token, remote_user, login_count, created_at, updated_at) VALUES('#{username}', #{friend_request.first[4]}, '#{username}', '#{password_salt}', '#{crypted_password}', '#{persistence_token}', '#{email}', 0, '#{current_time}', '#{current_time}');"
+					ActiveRecord::Base.connection.execute(insert_query)
+
 				end
 			end
-
 		end
 	end
-
 end

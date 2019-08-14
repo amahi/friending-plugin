@@ -43,7 +43,7 @@ class AmahiFriendingApi
 					friend_request.save
 
 					username = friend_request.username
-					status, saved_user_id = create_friend_user(email, username, user["pin"])
+					status, saved_user_id = create_friend_user(email, username, friend_request.pin)
 
 					if status
 						user["username"] = username
